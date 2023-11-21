@@ -1,11 +1,12 @@
 import merge from 'deepmerge'
 import Store from 'electron-store'
 import Conf from 'conf'
-import { BrowserWindow, ipcMain, ipcRenderer } from 'electron'
+import { BrowserWindow, ipcMain } from 'electron'
 import { Store as VuexStore, MutationPayload, Plugin, CommitOptions, DispatchOptions } from 'vuex'
 
 import { reducer, combineMerge, ipcEvents } from './helpers'
 import { Options, FinalOptions, Migrations, StoreInterface } from './types'
+import IpcRenderer = Electron.IpcRenderer;
 
 /**
 * Persist and rehydrate your [Vuex](https://vuex.vuejs.org/) state in your [Electron](https://electronjs.org) app
@@ -103,7 +104,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 		})
 	}
 
-	initIpcConnectionToMain(): void {
+	initIpcConnectionToMain(ipcRenderer: IpcRenderer): void {
 		ipcRenderer.invoke(ipcEvents.CONNECT)
 
 		ipcRenderer.on(ipcEvents.COMMIT, (_event, { type, payload, options }) => {
@@ -122,6 +123,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 		// 	return this.store.state
 		// })
 		ipcRenderer.on(ipcEvents.GET_STATE, (event) => {
+			console.log(this.store.state);
 			console.log('sendingState')
 			event.sender.send(ipcEvents.GET_STATE, this.store.state)
 			// return this.store.state
@@ -165,7 +167,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 			if (process.type === 'renderer') throw new Error('[Vuex Electron] Only call `.getStoreFromRenderer()` in the main process.')
 
 			// // Init electron-store
-			// PersistedState.initRenderer()
+			PersistedState.initRenderer()
 
 			let connection: Electron.WebContents | undefined
 
@@ -244,7 +246,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 		})
 		```
 	*/
-	static create <State>(options: Options<State> = {}): Plugin<State> {
+	static create <State>(options: Options<State> = {}, ipcRenderer: IpcRenderer): Plugin<State> {
 		return (store: VuexStore<State>) => {
 			const persistedState = new PersistedState(options, store)
 
@@ -258,7 +260,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 			}
 
 			if (persistedState.opts.ipc) {
-				persistedState.initIpcConnectionToMain()
+				persistedState.initIpcConnectionToMain(ipcRenderer)
 			}
 		}
 	}

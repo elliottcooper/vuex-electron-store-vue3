@@ -1,5 +1,6 @@
 import { Store as VuexStore, Plugin } from 'vuex';
 import { Options, FinalOptions, StoreInterface } from './types';
+import IpcRenderer = Electron.IpcRenderer;
 /**
 * Persist and rehydrate your [Vuex](https://vuex.vuejs.org/) state in your [Electron](https://electronjs.org) app
 */
@@ -13,7 +14,7 @@ declare class PersistedState<State extends Record<string, any> = Record<string, 
     checkStorage(): void;
     loadInitialState(): void;
     subscribeOnChanges(): void;
-    initIpcConnectionToMain(): void;
+    initIpcConnectionToMain(ipcRenderer: IpcRenderer): void;
     /**
      * Listen for an IPC connection from the renderer and return an interface to it's Vuex Store.
      *
@@ -66,7 +67,7 @@ declare class PersistedState<State extends Record<string, any> = Record<string, 
         })
         ```
     */
-    static create<State>(options?: Options<State>): Plugin<State>;
+    static create<State>(options: Options<State> | undefined, ipcRenderer: IpcRenderer): Plugin<State>;
     /**
      * Initializer to set up the required `ipc` communication channels for the [electron-store](https://github.com/sindresorhus/electron-store) module.
      * Needs to be called in the Electron main process.

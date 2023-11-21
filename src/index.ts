@@ -125,7 +125,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 		ipcRenderer.on(ipcEvents.GET_STATE, (event) => {
 			console.log(this.store.state);
 			console.log('sendingState')
-			event.sender.send(ipcEvents.GET_STATE, this.store.state)
+			event.sender.send(ipcEvents.GET_STATE, JSON.stringify(this.store.state))
 			// return this.store.state
 		})
 	}

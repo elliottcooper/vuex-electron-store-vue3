@@ -1,7 +1,7 @@
 import merge from 'deepmerge'
 import Store from 'electron-store'
 import Conf from 'conf'
-import { ipcMain, ipcRenderer } from 'electron-better-ipc'
+import { ipcMain, ipcRenderer } from 'electron'
 import { BrowserWindow } from 'electron'
 import { Store as VuexStore, MutationPayload, Plugin, CommitOptions, DispatchOptions } from 'vuex'
 
@@ -119,8 +119,12 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 			this.clearState()
 		})
 
-		ipcRenderer.answerMain(ipcEvents.GET_STATE, () => {			
-			return this.store.state
+		// ipcRenderer.answerMain(ipcEvents.GET_STATE, () => {
+		// 	return this.store.state
+		// })
+		ipcRenderer.on(ipcEvents.GET_STATE, (event) => {
+			event.sender.send(ipcEvents.GET_STATE, this.store.state)
+			// return this.store.state
 		})
 	}
 
@@ -160,8 +164,8 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 		const storePromise = new Promise((resolve) => {
 			if (process.type === 'renderer') throw new Error('[Vuex Electron] Only call `.getStoreFromRenderer()` in the main process.')
 
-			// Init electron-store
-			PersistedState.initRenderer()
+			// // Init electron-store
+			// PersistedState.initRenderer()
 
 			let connection: Electron.WebContents | undefined
 
@@ -183,7 +187,13 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 				const win = BrowserWindow.fromWebContents(connection)
 				if (!win) throw new Error('[Vuex Electron] Cannot get BrowserWindow from WebContents.')
 
-				return ipcMain.callRenderer(win, ipcEvents.GET_STATE)
+				const pr = new Promise((res) => {
+					ipcMain.on(ipcEvents.GET_STATE, (event, data) => {
+						res(data)
+					})
+				})
+				win.webContents.send(ipcEvents.GET_STATE)
+				return pr
 			}
 
 			const clearState: StoreInterface['clearState'] = () => {

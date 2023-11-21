@@ -20,13 +20,15 @@ declare class PersistedState<State extends Record<string, any> = Record<string, 
      * Requires `ipc` mode to be enabled in the plugin.
      *
      * Needs to be called in the main process and only supports one connected renderer.
+     *
+     * Note: Will timeout after 10 seconds if no renderer is connected.
      * @returns {Object} Methods to interact with the renderer's Vuex Store
      * @example
      * ```
         // In the main process
         import PersistedState from 'vuex-electron-store'
 
-        const store = PersistedState.getStoreFromRenderer()
+        const store = await PersistedState.getStoreFromRenderer()
 
         // Commit a mutation
         store.commit(type, payload, options)

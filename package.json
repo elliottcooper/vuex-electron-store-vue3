@@ -1,6 +1,6 @@
 {
 	"name": "vuex-electron-store",
-	"version": "1.4.26",
+	"version": "2.0.0",
 	"description": "Persist and rehydrate the Vuex state in your Electron app",
 	"main": "./lib/index.js",
 	"types": "./lib/index.d.ts",
@@ -29,10 +29,11 @@
 		"vuex"
 	],
 	"dependencies": {
+		"@babel/types": "^7.23.4",
 		"deepmerge": "^4.2.2",
 		"dot-prop": "^6.0.1",
 		"electron-better-ipc": "^2.0.0",
-		"electron-store": "^8.0.0",
+		"electron-store": "^8.1.0",
 		"type-fest": "^1.2.0"
 	},
 	"devDependencies": {
@@ -40,17 +41,17 @@
 		"@types/node": "^15.12.0",
 		"@typescript-eslint/eslint-plugin": "^4.26.0",
 		"@typescript-eslint/parser": "^4.26.0",
+		"electron": "^26.6.0",
 		"eslint": "^7.27.0",
 		"ts-node": "^9.1.1",
 		"tsc-watch": "^4.4.0",
 		"typescript": "^4.3.2",
-		"vue": "^2.6.13",
-		"vuex": "^3.6.2",
-		"electron": "^12.0.4"
+		"vue": "^3.3.8",
+		"vuex": "^4.1.0"
 	},
 	"peerDependencies": {
-		"vue": "^2.0.0",
-		"vuex": "^2.0.0 || ^3.0.0"
+		"vue": "^3.0.0",
+		"vuex": "^4.0.0"
 	},
 	"publishConfig": {
 		"access": "public"

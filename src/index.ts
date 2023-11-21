@@ -1,8 +1,7 @@
 import merge from 'deepmerge'
 import Store from 'electron-store'
 import Conf from 'conf'
-import { ipcMain, ipcRenderer } from 'electron'
-import { BrowserWindow } from 'electron'
+import { BrowserWindow, ipcMain, ipcRenderer } from 'electron'
 import { Store as VuexStore, MutationPayload, Plugin, CommitOptions, DispatchOptions } from 'vuex'
 
 import { reducer, combineMerge, ipcEvents } from './helpers'
@@ -105,7 +104,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 	}
 
 	initIpcConnectionToMain(): void {
-		ipcRenderer.send(ipcEvents.CONNECT)
+		ipcRenderer.invoke(ipcEvents.CONNECT)
 
 		ipcRenderer.on(ipcEvents.COMMIT, (_event, { type, payload, options }) => {
 			this.store.commit(type, payload, options)
@@ -123,6 +122,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 		// 	return this.store.state
 		// })
 		ipcRenderer.on(ipcEvents.GET_STATE, (event) => {
+			console.log('sendingState')
 			event.sender.send(ipcEvents.GET_STATE, this.store.state)
 			// return this.store.state
 		})
@@ -188,7 +188,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 				if (!win) throw new Error('[Vuex Electron] Cannot get BrowserWindow from WebContents.')
 
 				const pr = new Promise((res) => {
-					ipcMain.on(ipcEvents.GET_STATE, (event, data) => {
+					ipcMain.handle(ipcEvents.GET_STATE, (event, data) => {
 						res(data)
 					})
 				})
@@ -202,7 +202,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 				connection.send(ipcEvents.CLEAR_STATE)
 			}
 
-			ipcMain.on(ipcEvents.CONNECT, (event) => {
+			ipcMain.handle(ipcEvents.CONNECT, (event) => {
 				connection = event.sender
 
 				resolve({ commit, dispatch, getState, clearState })

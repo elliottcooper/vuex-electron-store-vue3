@@ -118,8 +118,8 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 			this.clearState()
 		})
 
-		ipcRenderer.on(ipcEvents.GET_STATE, (event) => {
-			ipcRenderer.invoke(ipcEvents.GET_STATE, JSON.stringify(this.store.state)).then(() => {})
+		ipcRenderer.on(ipcEvents.GET_STATE, (_) => {
+			ipcRenderer.invoke(ipcEvents.GET_STATE, JSON.stringify(this.store.state)).then()
 		})
 
 		this.recallConnection(ipcRenderer);
@@ -130,7 +130,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 			await ipcRenderer.invoke(ipcEvents.CONNECT);
 		}, 1000);
 
-		ipcRenderer.on(ipcEvents.CONNECT_RECEIVED, (event) => {
+		ipcRenderer.on(ipcEvents.CONNECT_RECEIVED, (_) => {
 			clearInterval(handler);
 		})
 	}

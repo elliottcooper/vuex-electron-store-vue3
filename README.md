@@ -2,8 +2,6 @@
   
 # 💾 Vuex Electron Store
 
-[![Node CI](https://github.com/BetaHuhn/vuex-electron-store/workflows/Node%20CI/badge.svg)](https://github.com/BetaHuhn/vuex-electron-store/actions?query=workflow%3A%22Node+CI%22) [![Release CI](https://github.com/BetaHuhn/vuex-electron-store/workflows/Release%20CI/badge.svg)](https://github.com/BetaHuhn/vuex-electron-store/actions?query=workflow%3A%22Release+CI%22) [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/BetaHuhn/vuex-electron-store/blob/master/LICENSE) ![David](https://img.shields.io/david/betahuhn/vuex-electron-store)
-
 Persist and rehydrate the Vuex state in your Electron app.
 
 </div>
@@ -22,20 +20,20 @@ This library is a wrapper around [electron-store](https://github.com/sindresorhu
 ## 🚀 Get started
 
 ```shell
-npm install vuex-electron-store
+npm install vuex-electron-store-vue3
 ```
 
-*Requires Electron 11 or later and currently only works with Vue 2*
+*Requires Electron 26 or later and works with Vue 3*
 
 ## 📚 Usage
 
-To use [vuex-electron-store](https://github.com/BetaHuhn/vuex-electron-store), add it as a plugin to your Vuex store:
+To use [vuex-electron-store-vue3](https://github.com/elliottcooper/vuex-electron-store-vue3-vue3), add it as a plugin to your Vuex store:
 
 ```js
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 Vue.use(Vuex)
 
@@ -51,43 +49,43 @@ export default new Vuex.Store({
 And then initialize it in the [Electron main process](https://www.electronjs.org/docs/tutorial/quick-start#run-the-main-process):
 
 ```js
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 PersistedState.initRenderer()
 ```
 
-> If you access the store from the main process (using `.getStoreFromRenderer()`) this is not needed
+> If you access the store from the main process (using `.getStoreFromRenderer(ipcMain)`) this is not needed
 
 And you are done! Your Electron app now has a persistent Vuex state! 🎉
 
 ## ⚙️ Options
 
-You can also pass an options object to `.create()` to customize the behaviour of [vuex-electron-store](https://github.com/BetaHuhn/vuex-electron-store) further:
+You can also pass an options object to `.create()` to customize the behaviour of [vuex-electron-store-vue3](https://github.com/elliottcooper/vuex-electron-store-vue3-vue3) further:
 
 ```js
 PersistedState.create({
 	paths: [ 'auth.user' ]
 })
 ```
-<details><summary>Here are all the options <a href="https://github.com/BetaHuhn/vuex-electron-store">vuex-electron-store</a> supports:</summary>
+<details><summary>Here are all the options <a href="https://github.com/elliottcooper/vuex-electron-store-vue3-vue3">vuex-electron-store-vue3</a> supports:</summary>
 <br>
 
-| Name | Type | Description | Default |
-| ------------- | ------------- | ------------- | ------------- |
-| `fileName` | `string` | Name of the storage file (without extension) | `vuex` |
-| `paths` | `array` | An array of any paths to partially persist the state | n/a |
-| `filter` | `function` | A function which will be called on each mutation that triggers `setState` | n/a |
-| `overwrite` | `boolean` | Overwrite the existing state with the persisted state directly when rehydrating | `false` |
-| `storageKey` | `string` | Name of the key used for the stored state object | `state` |
-| `checkStorage` | `boolean` | Check if the storage file is available and can be accessed | `true` |
-| `dev` | `boolean` | Enable development mode | `false` |
-| `reducer` | `function` | A function to reduce the state to persist based on the given paths | n/a |
-| `arrayMerger` | `function` | A function for merging arrays when rehydrating state | combine arrays |
-| `resetMutation` | `string` | Name of a mutation which when called will reset the persisted state | n/a |
-| `encryptionKey` | `string/Buffer/TypedArray/DataView` | Encryption key used to encrypt the storage file | n/a |
-| `storageFileLocation` | `string` | Location where the storage file should be stored | [config directory](https://github.com/sindresorhus/env-paths#pathsconfig) |
-| `migrations` | `object` | Migration operations to perform to the persisted state whenever a version is upgraded | n/a |
-| `ipc` | `boolean` | Enable IPC communication with the main process | `false` |
+| Name | Type | Description                                                                                                    | Default |
+| ------------- | ------------- |----------------------------------------------------------------------------------------------------------------| ------------- |
+| `fileName` | `string` | Name of the storage file (without extension)                                                                   | `vuex` |
+| `paths` | `array` | An array of any paths to partially persist the state                                                           | n/a |
+| `filter` | `function` | A function which will be called on each mutation that triggers `setState`                                      | n/a |
+| `overwrite` | `boolean` | Overwrite the existing state with the persisted state directly when rehydrating                                | `false` |
+| `storageKey` | `string` | Name of the key used for the stored state object                                                               | `state` |
+| `checkStorage` | `boolean` | Check if the storage file is available and can be accessed                                                     | `true` |
+| `dev` | `boolean` | Enable development mode                                                                                        | `false` |
+| `reducer` | `function` | A function to reduce the state to persist based on the given paths                                             | n/a |
+| `arrayMerger` | `function` | A function for merging arrays when rehydrating state                                                           | combine arrays |
+| `resetMutation` | `string` | Name of a mutation which when called will reset the persisted state                                            | n/a |
+| `encryptionKey` | `string/Buffer/TypedArray/DataView` | Encryption key used to encrypt the storage file                                                                | n/a |
+| `storageFileLocation` | `string` | Location where the storage file should be stored                                                               | [config directory](https://github.com/sindresorhus/env-paths#pathsconfig) |
+| `migrations` | `object` | Migration operations to perform to the persisted state whenever a version is upgraded                          | n/a |
+| `ipc` | `boolean` | Enable IPC communication with the main process (ensure you pass the `ipcRenderer` object to the secondary param) | `false` |
 
 </details>
 
@@ -253,7 +251,7 @@ Don't store the key like this if security is of concern, the encryption key woul
 
 If you want to access the state or commit mutations/dispatch actions from the [Electron main process](https://www.electronjs.org/docs/tutorial/quick-start#run-the-main-process), you need to enable `ipc` mode. 
 
-You can then use the `.getStoreFromRenderer()` method in the main process to listen for an IPC connection from the renderer. Once connected you can use the returned `.commit()` and `.dispatch()` methods like you would in a normal Vue Component. Calling `.getState()` returns a promise containing the current Vuex state.
+You can then use the `.getStoreFromRenderer(ipcMain)` method in the main process to listen for an IPC connection from the renderer. Once connected you can use the returned `.commit()` and `.dispatch()` methods like you would in a normal Vue Component. Calling `.getState()` returns a promise containing the current Vuex state.
 
 > This can only be used with one renderer
 
@@ -262,17 +260,20 @@ You can then use the `.getStoreFromRenderer()` method in the main process to lis
 Enable `ipc` mode:
 
 ```js
+import { ipcRenderer } from 'electron';
+
 PersistedState.create({
 	ipc: true
-})
+}, ipcRenderer)
 ```
 
 Then in the Electron main process:
 
 ```js
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
+import { ipcMain } from 'electron'
 
-const store = await PersistedState.getStoreFromRenderer()
+const store = await PersistedState.getStoreFromRenderer(ipcMain)
 
 // Commit a mutation
 store.commit(type, payload, options)
@@ -287,7 +288,7 @@ const state = await store.getState()
 store.clearState()
 ```
 
-> When you use `.getStoreFromRenderer()` you don't need to call `.initRenderer()`
+> When you use `.getStoreFromRenderer(ipcMain)` you don't need to call `.initRenderer()`
 	
 </details>
 
@@ -300,7 +301,7 @@ Here are a few examples to help you get started!
 Before you use any of them, make sure you initialize the module in the [Electron main process](https://www.electronjs.org/docs/tutorial/quick-start#run-the-main-process):
 
 ```js
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 PersistedState.initRenderer()
 ```
@@ -313,7 +314,7 @@ In this example the entire state will be persisted and rehydrated after a restar
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 Vue.use(Vuex)
 
@@ -339,7 +340,7 @@ In this example only part of the state will be persisted and rehydrated after a 
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 Vue.use(Vuex)
 
@@ -372,7 +373,7 @@ In this example we add a filter to specify which mutations can persist the updat
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 Vue.use(Vuex)
 
@@ -410,7 +411,7 @@ By default arrays from the existing state will be merged with arrays from the pe
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 Vue.use(Vuex)
 
@@ -446,7 +447,7 @@ By default the existing state will be merged with the persisted state using [dee
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 Vue.use(Vuex)
 
@@ -465,13 +466,13 @@ export default new Vuex.Store({
 
 ### During development
 
-Setting `dev` to true will stop [vuex-electron-store](https://github.com/BetaHuhn/vuex-electron-store) from persisting and rehydrating the state.
+Setting `dev` to true will stop [vuex-electron-store-vue3](https://github.com/elliottcooper/vuex-electron-store-vue3-vue3) from persisting and rehydrating the state.
 
 ```js
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 Vue.use(Vuex)
 
@@ -496,7 +497,7 @@ You can reset the persisted state by specifying a mutation as the `resetMutation
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 Vue.use(Vuex)
 
@@ -531,7 +532,7 @@ You can optionally encrypt/obfuscate the storage file by specifying an encryptio
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 Vue.use(Vuex)
 
@@ -558,7 +559,7 @@ You can use migrations to perform operations on the persisted data whenever a ve
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
 
 Vue.use(Vuex)
 
@@ -594,9 +595,10 @@ The `state` parameter contains the persisted state before rehydration.
 If you enable the [`ipc` mode](#ipc-mode) you can access the state or commit mutations/dispatch actions from the [Electron main process](https://www.electronjs.org/docs/tutorial/quick-start#run-the-main-process):
 
 ```js
-import PersistedState from 'vuex-electron-store'
+import PersistedState from 'vuex-electron-store-vue3'
+import { ipcMain } from 'electron';
 
-const store = await PersistedState.getStoreFromRenderer()
+const store = await PersistedState.getStoreFromRenderer(ipcMain)
 
 // Commit a mutation
 store.commit(type, payload, options)
@@ -611,7 +613,7 @@ const state = await store.getState()
 store.clearState()
 ```
 
-> When you use `.getStoreFromRenderer()` you don't need to call `.initRenderer()`
+> When you use `.getStoreFromRenderer(ipcMain)` you don't need to call `.initRenderer()`
 
 ---
 
@@ -623,24 +625,17 @@ Issues and PRs are very welcome!
 - run `yarn watch` or `npm run watch` to watch for changes.
 - run `yarn build` or `npm run build` to produce a compiled version in the `lib` folder.
 
-### Todo
-
-- Add support for Vue 3
 
 ## ❔ About
 
-This project was developed by me ([@betahuhn](https://github.com/BetaHuhn)) in my free time. If you want to support me:
-
-[![Donate via PayPal](https://img.shields.io/badge/paypal-donate-009cde.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=394RTSBEEEFEE)
-
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/F1F81S2RK)
+This project was originally developed by ([@betahuhn](https://github.com/BetaHuhn)) in their free time, and has been updated to work with `Vue3` by ([@elliottcooper](https://github.com/elliottcooper)).
 
 ### Credit
 
-This library is a wrapper around the great [electron-store](https://github.com/sindresorhus/electron-store) by [@sindresorhus](https://github.com/sindresorhus) and was inspired by [vuex-electron](https://github.com/vue-electron/vuex-electron) and [vuex-persistedstate](https://github.com/robinvdvleuten/vuex-persistedstate).
+This library is a wrapper around the great [electron-store](https://github.com/sindresorhus/electron-store) by [@sindresorhus](https://github.com/sindresorhus) and was inspired by [vuex-electron](https://github.com/vue-electron/vuex-electron) and [vuex-persistedstate](https://github.com/robinvdvleuten/vuex-persistedstate). This project was originally developed by ([@betahuhn](https://github.com/BetaHuhn)).
 
 ## 📄 License
 
-Copyright 2021 Maximilian Schiller
+Copyright 2023 Elliott Cooper
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

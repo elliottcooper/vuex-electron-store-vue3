@@ -1,6 +1,6 @@
-## [v2.0.0] - 2023-11-22
+## [v2.0.2] - 2023-11-22
 
-[Release notes](https://github.com/BetaHuhn/vuex-electron-store/releases/tag/v1.4.26) · [Compare](https://github.com/BetaHuhn/vuex-electron-store/compare/v1.4.25...v1.4.26) · [Tag](https://github.com/BetaHuhn/vuex-electron-store/tree/v1.4.26) · Archive ([zip](https://github.com/BetaHuhn/vuex-electron-store/archive/v1.4.26.zip) · [tar.gz](https://github.com/BetaHuhn/vuex-electron-store/archive/v1.4.26.tar.gz))
+[Release notes](https://github.com/elliottcooper/vuex-electron-store-vue3/releases/tag/2.0.2) · [Tag](https://github.com/elliottcooper/vuex-electron-store-vue3/tree/2.0.2) · Archive ([zip](https://github.com/elliottcooper/vuex-electron-store-vue3/archive/2.0.2.zip) · [tar.gz](https://github.com/elliottcooper/vuex-electron-store-vue3/archive/2.0.2.tar.gz))
 
 ### Dependency updates
 
@@ -8,6 +8,8 @@
 - Bump `vue 3.3.8`
 - Bump `vuex 4.1.0`
 - Bump `electron 26.6.0`
+- Fix ipc problems with new electron
+- Update readme
 
 ## [v1.4.26] - 2022-01-24
 

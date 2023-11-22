@@ -14,23 +14,23 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/BetaHuhn/vuex-electron-store.git"
+		"url": "git+https://github.com/elliottcooper/vuex-electron-store-vue3.git"
 	},
 	"bugs": {
-		"url": "https://github.com/BetaHuhn/vuex-electron-store/issues"
+		"url" : "https://github.com/elliottcooper/vuex-electron-store-vue3/issues"
 	},
 	"homepage": "https://github.com/BetaHuhn/vuex-electron-store#readme",
-	"author": "Maximilian Schiller <schiller@mxis.ch>",
+	"author": "Elliott Cooper <ecooper@singular.health>",
 	"contributors" : [
 		{
 			"name" : "Elliott Cooper",
 			"email" : "ecooper@singular.health",
-			"url" : "http://barnyrubble.tumblr.com/"
+			"url" : "https://github.com/elliottcooper/vuex-electron-store-vue3#readme"
 		},
 		{
-			"name" : "Newton Bubble",
-			"email" : "n@bubble.com",
-			"url" : "http://newtonbubble.tumblr.com/"
+			"name" : "Maximilian Schiller",
+			"email" : "schiller@mxis.ch",
+			"url" : "https://github.com/BetaHuhn/vuex-electron-store#readme"
 		}
 	],
 	"license": "MIT",

@@ -4,6 +4,7 @@
 
 Persist and rehydrate the Vuex state in your Electron app.
 
+Checkout some of the great work we are doing @[Singular Health](https://singular.health)
 </div>
 
 ## Features
@@ -628,7 +629,7 @@ Issues and PRs are very welcome!
 
 ## ❔ About
 
-This project was originally developed by ([@betahuhn](https://github.com/BetaHuhn)) in their free time, and has been updated to work with `Vue3` by ([@elliottcooper](https://github.com/elliottcooper)).
+This project was originally developed by ([@betahuhn](https://github.com/BetaHuhn)) in their free time, and has been updated to work with `Vue3` by ([@elliottcooper](https://github.com/elliottcooper)) on behalf of ([Singular Health](https://singular.health)).
 
 ### Credit
 
@@ -636,6 +637,6 @@ This library is a wrapper around the great [electron-store](https://github.com/s
 
 ## 📄 License
 
-Copyright 2023 Elliott Cooper
+Copyright 2023 Elliott Cooper ([Singular Health](https://singular.health))
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

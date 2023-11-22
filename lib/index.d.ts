@@ -1,3 +1,4 @@
+import 'electron';
 import { Store as VuexStore, Plugin } from 'vuex';
 import { Options, FinalOptions, StoreInterface } from './types';
 import IpcRenderer = Electron.IpcRenderer;
@@ -16,7 +17,7 @@ declare class PersistedState<State extends Record<string, any> = Record<string, 
     loadInitialState(): void;
     subscribeOnChanges(): void;
     initIpcConnectionToMain(ipcRenderer: IpcRenderer): void;
-    connectToBackend(ipcRenderer: IpcRenderer): void;
+    recallConnection(ipcRenderer: IpcRenderer): void;
     /**
      * Listen for an IPC connection from the renderer and return an interface to it's Vuex Store.
      *
@@ -49,26 +50,27 @@ declare class PersistedState<State extends Record<string, any> = Record<string, 
     static getStoreFromRenderer<T>(ipcMain: IpcMain): Promise<StoreInterface<T> | Error>;
     /**
      * Create a new Vuex plugin which initializes the [electron-store](https://github.com/sindresorhus/electron-store), rehydrates the state and persistently stores any changes
-     * @param {Options} Options - Configuration options
      * @returns The Vuex Plugin
      * @example
-        ```
-        import Vue from 'vue'
-        import Vuex from 'vuex'
+     ```
+     import Vue from 'vue'
+     import Vuex from 'vuex'
 
-        import PersistedState from 'vuex-electron-store'
+     import PersistedState from 'vuex-electron-store'
 
-        Vue.use(Vuex)
+     Vue.use(Vuex)
 
-        export default new Vuex.Store({
-            // ...
-            plugins: [
-                PersistedState.create()
-            ],
-            // ...
-        })
-        ```
-    */
+     export default new Vuex.Store({
+     // ...
+     plugins: [
+     PersistedState.create()
+     ],
+     // ...
+     })
+     ```
+     * @param options - Default payload to persisted state
+     * @param ipcRenderer - Electron ipcRenderer object (only when options.ipc is set to `true`)
+     */
     static create<State>(options: Options<State> | undefined, ipcRenderer: IpcRenderer): Plugin<State>;
     /**
      * Initializer to set up the required `ipc` communication channels for the [electron-store](https://github.com/sindresorhus/electron-store) module.
@@ -76,4 +78,4 @@ declare class PersistedState<State extends Record<string, any> = Record<string, 
     */
     static initRenderer(): void;
 }
-export default PersistedState;
+export { PersistedState };

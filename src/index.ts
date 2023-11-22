@@ -1,12 +1,13 @@
 import merge from 'deepmerge'
 import Store from 'electron-store'
 import Conf from 'conf'
-import { BrowserWindow, ipcMain } from 'electron'
+import 'electron'
 import { Store as VuexStore, MutationPayload, Plugin, CommitOptions, DispatchOptions } from 'vuex'
 
 import { reducer, combineMerge, ipcEvents } from './helpers'
 import { Options, FinalOptions, Migrations, StoreInterface } from './types'
 import IpcRenderer = Electron.IpcRenderer;
+import IpcMain = Electron.IpcMain;
 
 /**
 * Persist and rehydrate your [Vuex](https://vuex.vuejs.org/) state in your [Electron](https://electronjs.org) app
@@ -105,8 +106,6 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 	}
 
 	initIpcConnectionToMain(ipcRenderer: IpcRenderer): void {
-		ipcRenderer.invoke(ipcEvents.CONNECT)
-
 		ipcRenderer.on(ipcEvents.COMMIT, (_event, { type, payload, options }) => {
 			this.store.commit(type, payload, options)
 		})
@@ -119,14 +118,20 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 			this.clearState()
 		})
 
-		// ipcRenderer.answerMain(ipcEvents.GET_STATE, () => {
-		// 	return this.store.state
-		// })
 		ipcRenderer.on(ipcEvents.GET_STATE, (event) => {
-			console.log(this.store.state);
-			console.log('sendingState')
-			event.sender.send(ipcEvents.GET_STATE, JSON.stringify(this.store.state))
-			// return this.store.state
+			ipcRenderer.invoke(ipcEvents.GET_STATE, JSON.stringify(this.store.state)).then(() => {})
+		})
+
+		this.recallConnection(ipcRenderer);
+	}
+	// Fire events to the backend to get the connection.
+	recallConnection(ipcRenderer: IpcRenderer): void {
+		const handler = setInterval(async () => {
+			await ipcRenderer.invoke(ipcEvents.CONNECT);
+		}, 1000);
+
+		ipcRenderer.on(ipcEvents.CONNECT_RECEIVED, (event) => {
+			clearInterval(handler);
 		})
 	}
 
@@ -159,7 +164,7 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 		store.clearState()
 		```
 	*/
-	static getStoreFromRenderer(): Promise<StoreInterface | Error> {
+	static getStoreFromRenderer<T>(ipcMain: IpcMain): Promise<StoreInterface<T> | Error> {
 		// Abitrary timeout to wait for the renderer to connect
 		const ipcTimeout = 10000
 
@@ -171,34 +176,33 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 
 			let connection: Electron.WebContents | undefined
 
-			const commit: StoreInterface['commit'] = (type: string, payload?: any, options?: CommitOptions) => {
+			const commit: StoreInterface<T>['commit'] = (type: string, payload?: any, options?: CommitOptions) => {
 				if (!connection) throw new Error('[Vuex Electron] Not connected to renderer.')
 
 				connection.send(ipcEvents.COMMIT, { type, payload, options })
 			}
 
-			const dispatch: StoreInterface['dispatch'] = (type: string, payload?: any, options?: DispatchOptions) => {
+			const dispatch: StoreInterface<T>['dispatch'] = (type: string, payload?: any, options?: DispatchOptions) => {
 				if (!connection) throw new Error('[Vuex Electron] Not connected to renderer.')
 
 				connection.send(ipcEvents.DISPATCH, { type, payload, options })
 			}
 
-			const getState: StoreInterface['getState'] = () => {
+			const getState: StoreInterface<T>['getState'] = () => {
 				if (!connection) throw new Error('[Vuex Electron] Not connected to renderer.')
 
-				const win = BrowserWindow.fromWebContents(connection)
-				if (!win) throw new Error('[Vuex Electron] Cannot get BrowserWindow from WebContents.')
-
-				const pr = new Promise((res) => {
+				const uponHandler = new Promise<T>((res) => {
 					ipcMain.handle(ipcEvents.GET_STATE, (event, data) => {
-						res(data)
+						res(JSON.parse(data))
 					})
 				})
-				win.webContents.send(ipcEvents.GET_STATE)
-				return pr
+
+				connection.send(ipcEvents.GET_STATE)
+
+				return uponHandler
 			}
 
-			const clearState: StoreInterface['clearState'] = () => {
+			const clearState: StoreInterface<T>['clearState'] = () => {
 				if (!connection) throw new Error('[Vuex Electron] Not connected to renderer.')
 
 				connection.send(ipcEvents.CLEAR_STATE)
@@ -208,6 +212,9 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 				connection = event.sender
 
 				resolve({ commit, dispatch, getState, clearState })
+
+				// Terminate the frontend recall
+				connection.send(ipcEvents.CONNECT_RECEIVED)
 
 				// Remove connection when window is closed
 				connection.on('destroyed', () => {
@@ -221,31 +228,32 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 			reject(new Error('[Vuex Electron] Reached timeout while waiting for renderer to connect.'))
 		}, ipcTimeout))
 
-		return Promise.race([ storePromise, timeout ]) as Promise<StoreInterface | Error>
+		return Promise.race([ storePromise, timeout ]) as Promise<StoreInterface<T> | Error>
 	}
 
 	/**
 	 * Create a new Vuex plugin which initializes the [electron-store](https://github.com/sindresorhus/electron-store), rehydrates the state and persistently stores any changes
-	 * @param {Options} Options - Configuration options
 	 * @returns The Vuex Plugin
 	 * @example
-		```
-		import Vue from 'vue'
-		import Vuex from 'vuex'
+	 ```
+	 import Vue from 'vue'
+	 import Vuex from 'vuex'
 
-		import PersistedState from 'vuex-electron-store'
+	 import PersistedState from 'vuex-electron-store'
 
-		Vue.use(Vuex)
+	 Vue.use(Vuex)
 
-		export default new Vuex.Store({
-			// ...
-			plugins: [
-				PersistedState.create()
-			],
-			// ...
-		})
-		```
-	*/
+	 export default new Vuex.Store({
+	 // ...
+	 plugins: [
+	 PersistedState.create()
+	 ],
+	 // ...
+	 })
+	 ```
+	 * @param options - Default payload to persisted state
+	 * @param ipcRenderer - Electron ipcRenderer object (only when options.ipc is set to `true`)
+	 */
 	static create <State>(options: Options<State> = {}, ipcRenderer: IpcRenderer): Plugin<State> {
 		return (store: VuexStore<State>) => {
 			const persistedState = new PersistedState(options, store)
@@ -274,4 +282,4 @@ class PersistedState<State extends Record<string, any> = Record<string, unknown>
 	}
 }
 
-export default PersistedState
+export { PersistedState }

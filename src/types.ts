@@ -152,7 +152,7 @@ export interface Options<T> extends Pick<StoreOptions<T>, 'encryptionKey'> {
 	ipc?: boolean;
 }
 
-export interface StoreInterface {
+export interface StoreInterface<T> {
 	/**
 	 * Commit a Mutation in the renderer's Vuex Store
 	 */
@@ -166,7 +166,7 @@ export interface StoreInterface {
 	/**
 	 * Get the current state from the renderer's Vuex Store
 	 */
-	getState: () => any;
+	getState: () => Promise<T>;
 
 	/**
 	 * Clear the persisted state

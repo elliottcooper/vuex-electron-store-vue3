@@ -1,3 +1,14 @@
+## [v2.0.0] - 2023-11-22
+
+[Release notes](https://github.com/BetaHuhn/vuex-electron-store/releases/tag/v1.4.26) · [Compare](https://github.com/BetaHuhn/vuex-electron-store/compare/v1.4.25...v1.4.26) · [Tag](https://github.com/BetaHuhn/vuex-electron-store/tree/v1.4.26) · Archive ([zip](https://github.com/BetaHuhn/vuex-electron-store/archive/v1.4.26.zip) · [tar.gz](https://github.com/BetaHuhn/vuex-electron-store/archive/v1.4.26.tar.gz))
+
+### Dependency updates
+
+- Vue3 Support
+- Bump `vue 3.3.8`
+- Bump `vuex 4.1.0`
+- Bump `electron 26.6.0`
+
 ## [v1.4.26] - 2022-01-24
 
 [Release notes](https://github.com/BetaHuhn/vuex-electron-store/releases/tag/v1.4.26) · [Compare](https://github.com/BetaHuhn/vuex-electron-store/compare/v1.4.25...v1.4.26) · [Tag](https://github.com/BetaHuhn/vuex-electron-store/tree/v1.4.26) · Archive ([zip](https://github.com/BetaHuhn/vuex-electron-store/archive/v1.4.26.zip) · [tar.gz](https://github.com/BetaHuhn/vuex-electron-store/archive/v1.4.26.tar.gz))

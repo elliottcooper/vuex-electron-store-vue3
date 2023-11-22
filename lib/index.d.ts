@@ -1,6 +1,7 @@
 import { Store as VuexStore, Plugin } from 'vuex';
 import { Options, FinalOptions, StoreInterface } from './types';
 import IpcRenderer = Electron.IpcRenderer;
+import IpcMain = Electron.IpcMain;
 /**
 * Persist and rehydrate your [Vuex](https://vuex.vuejs.org/) state in your [Electron](https://electronjs.org) app
 */
@@ -15,6 +16,7 @@ declare class PersistedState<State extends Record<string, any> = Record<string, 
     loadInitialState(): void;
     subscribeOnChanges(): void;
     initIpcConnectionToMain(ipcRenderer: IpcRenderer): void;
+    connectToBackend(ipcRenderer: IpcRenderer): void;
     /**
      * Listen for an IPC connection from the renderer and return an interface to it's Vuex Store.
      *
@@ -44,7 +46,7 @@ declare class PersistedState<State extends Record<string, any> = Record<string, 
         store.clearState()
         ```
     */
-    static getStoreFromRenderer(): Promise<StoreInterface | Error>;
+    static getStoreFromRenderer<T>(ipcMain: IpcMain): Promise<StoreInterface<T> | Error>;
     /**
      * Create a new Vuex plugin which initializes the [electron-store](https://github.com/sindresorhus/electron-store), rehydrates the state and persistently stores any changes
      * @param {Options} Options - Configuration options
